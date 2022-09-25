@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="rules" class="login-form" auto-complete="on" label-position="left">
       <div class="loginBox">
         <div class="title"><img src="@/assets/common/logo.png" alt=""></div>
         <div class="inputText">
@@ -20,7 +20,7 @@
               <svg-icon icon-class="password" />
             </span> -->
             <span class="el-icon-lock svg-container" />
-            <el-input v-model="loginForm.password" :type="passwordType" class="ipt" />
+            <el-input ref="ipt" v-model="loginForm.password" :type="passwordType" class="ipt" />
             <span class="show-pwd" @click="showPwd">
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
@@ -38,7 +38,7 @@
                 <el-input type="text" class="ipt" placeholder="请输入验证码" />
               </el-form-item>
             </el-col>
-            <el-col :span="7"><img style="height:49px;width:130px" src="~@/assets/common/yzm.png" alt=""></el-col>
+            <el-col :span="7"><img style="height:49px;width:130px" :src="codeImgURL" alt="" @click="getCode"></el-col>
           </el-row>
           <el-button class="loginBtn" size="medium">登录</el-button>
         </div>
@@ -49,21 +49,36 @@
 </template>
 
 <script>
-
+import { getCodeAPI } from '@/api'
 export default {
   name: 'Login',
   data() {
     return {
       passwordType: 'password',
+      codeToken: '',
+      codeImgURL: '',
       loginForm: {
         username: 'admin',
         password: 'admin'
-      }
+      },
+      rules: {}
     }
   },
+  created() {},
   methods: {
+    //  验证码
+    async getCode() {
+      const codeToken = Math.random().toString()
+      const data = await getCodeAPI(codeToken)
+      console.log(data.request.responseURL)
+      this.codeImgURL = data.request.responseURL
+    },
+    // 密码
     showPwd() {
       this.passwordType === 'password' ? this.passwordType = 'text' : this.passwordType = 'password'
+      this.$nextTick(() => {
+        this.$refs.ipt.focus()
+      })
     }
   }
 
@@ -76,7 +91,7 @@ export default {
 
 $bg:#fff;
 $light_gray:#fff;
-$cursor: #fff;
+$cursor: #889aa4;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {

@@ -35,6 +35,13 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      '/api': {
+        target: 'http://likede2-admin.itheima.net/likede/',
+        pathRewrite: { '^/api': '' },
+        changeOrigin: true
+      }
     }
   },
   configureWebpack: {
