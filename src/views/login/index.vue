@@ -2,7 +2,9 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="rules" class="login-form" auto-complete="on" label-position="left">
       <div class="loginBox">
-        <div class="title"><img src="@/assets/common/logo.png" alt=""></div>
+        <div class="title">
+          <img src="@/assets/common/logo.png" alt="">
+        </div>
         <div class="inputText">
 
           <!-- 用户名 -->
@@ -11,7 +13,7 @@
               <svg-icon icon-class="user" />
             </span> -->
             <span class="el-icon-mobile-phone svg-container" />
-            <el-input v-model="loginForm.username" type="text" class="ipt" />
+            <el-input v-model.trim="loginForm.username" type="text" class="ipt" />
           </el-form-item>
 
           <!-- 密码 -->
@@ -20,27 +22,26 @@
               <svg-icon icon-class="password" />
             </span> -->
             <span class="el-icon-lock svg-container" />
-            <el-input ref="ipt" v-model="loginForm.password" :type="passwordType" class="ipt" />
+            <el-input ref="ipt" v-model.trim="loginForm.password" :type="passwordType" class="ipt" />
             <span class="show-pwd" @click="showPwd">
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
 
           <!-- 验证码 -->
-
           <el-row>
             <el-col :span="17">
-              <el-form-item class="border">
+              <el-form-item class="border" prop="code">
                 <!-- <span class="svg-container">
             <svg-icon icon-class="user" />
             </span> -->
                 <span class="el-icon-warning-outline svg-container" />
-                <el-input type="text" class="ipt" placeholder="请输入验证码" />
+                <el-input v-model.trim="loginForm.code" type="text" class="ipt" placeholder="请输入验证码" />
               </el-form-item>
             </el-col>
-            <el-col :span="7"><img style="height:49px;width:130px" :src="codeImgURL" alt="" @click="getCode"></el-col>
+            <el-col :span="7"><img ref="img" style="height:49px;width:130px" :src="codeImgURL" @click="getCode"></el-col>
           </el-row>
-          <el-button class="loginBtn" size="medium">登录</el-button>
+          <el-button class="loginBtn" :loading="loading" size="medium" @click="loginBtn">登录</el-button>
         </div>
 
       </div>
@@ -49,29 +50,52 @@
 </template>
 
 <script>
-import { getCodeAPI } from '@/api'
+import { getCodeAPI, loginActionAPI } from '@/api'
 export default {
   name: 'Login',
   data() {
     return {
+      loading: false,
       passwordType: 'password',
       codeToken: '',
       codeImgURL: '',
       loginForm: {
         username: 'admin',
-        password: 'admin'
+        password: 'admin',
+        code: ''
       },
-      rules: {}
+      rules: {
+        username: [
+          {
+            required: true,
+            message: '请输入账号'
+          }
+        ],
+        password: [
+          {
+            required: true,
+            message: '请输入密码'
+          }
+        ],
+        code: [{
+          required: true,
+          // message: '请输入验证码'
+          validator: this.VcCode,
+          trigger: 'blur'
+        }]
+      }
     }
   },
-  created() {},
+  created() {
+    this.getCode()
+  },
+  // mounted() { this.$refs.img.click() },
   methods: {
-    //  验证码
-    async getCode() {
-      const codeToken = Math.random().toString()
-      const data = await getCodeAPI(codeToken)
-      console.log(data.request.responseURL)
-      this.codeImgURL = data.request.responseURL
+    //  验证码校验
+    VcCode(rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入验证码'))
+      } else (callback())
     },
     // 密码
     showPwd() {
@@ -79,6 +103,34 @@ export default {
       this.$nextTick(() => {
         this.$refs.ipt.focus()
       })
+    },
+    //  图片验证码请求
+    async getCode() {
+      this.codeToken = Math.random().toString()
+      const { data } = await getCodeAPI(this.codeToken)
+      this.codeImgURL = window.URL.createObjectURL(data)
+    },
+    // 登录请求
+    async  loginBtn() {
+      try {
+        await this.$refs.loginForm.validate()
+        this.loading = true
+        const { data } = await loginActionAPI(this.loginForm.username, this.loginForm.password, this.loginForm.code, this.codeToken)
+        // console.log(data)
+        if (data.msg !== '登录成功') return this.$message.error(data.msg)
+        this.$message({
+          message: data.msg,
+          type: 'success'
+        })
+        this.$store.commit('user/SET_TOKEN', data.token)
+        this.$router.push({
+          name: 'Dashboard'
+        })
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loading = false
+      }
     }
   }
 

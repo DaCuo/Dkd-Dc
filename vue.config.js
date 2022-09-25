@@ -38,8 +38,8 @@ module.exports = {
     },
     proxy: {
       '/api': {
-        target: 'http://likede2-admin.itheima.net/likede/',
-        pathRewrite: { '^/api': '' },
+        target: 'http://likede2-admin.itheima.net/likede',
+        // pathRewrite: { '^/api': '' },
         changeOrigin: true
       }
     }
