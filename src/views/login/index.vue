@@ -8,12 +8,12 @@
         <div class="inputText">
 
           <!-- 用户名 -->
-          <el-form-item prop="username">
+          <el-form-item prop="loginName">
             <!-- <span class="svg-container">
               <svg-icon icon-class="user" />
             </span> -->
             <span class="el-icon-mobile-phone svg-container" />
-            <el-input v-model.trim="loginForm.username" type="text" class="ipt" />
+            <el-input v-model.trim="loginForm.loginName" type="text" class="ipt" />
           </el-form-item>
 
           <!-- 密码 -->
@@ -50,22 +50,24 @@
 </template>
 
 <script>
-import { getCodeAPI, loginActionAPI } from '@/api'
+// import { getCodeAPI, loginActionAPI } from '@/api'
+import { getCodeAPI } from '@/api'
 export default {
   name: 'Login',
   data() {
     return {
       loading: false,
       passwordType: 'password',
-      codeToken: '',
       codeImgURL: '',
       loginForm: {
-        username: 'admin',
+        loginName: 'admin',
         password: 'admin',
-        code: ''
+        clientToken: '',
+        code: '',
+        loginType: 0
       },
       rules: {
-        username: [
+        loginName: [
           {
             required: true,
             message: '请输入账号'
@@ -106,31 +108,35 @@ export default {
     },
     //  图片验证码请求
     async getCode() {
-      this.codeToken = Math.random().toString()
-      const { data } = await getCodeAPI(this.codeToken)
+      this.loginForm.clientToken = Math.random().toString()
+      const { data } = await getCodeAPI(this.loginForm.clientToken)
       this.codeImgURL = window.URL.createObjectURL(data)
     },
     // 登录请求
     async  loginBtn() {
-      try {
-        await this.$refs.loginForm.validate()
-        this.loading = true
-        const { data } = await loginActionAPI(this.loginForm.username, this.loginForm.password, this.loginForm.code, this.codeToken)
-        // console.log(data)
-        if (data.msg !== '登录成功') return this.$message.error(data.msg)
-        this.$message({
-          message: data.msg,
-          type: 'success'
-        })
-        this.$store.commit('user/SET_TOKEN', data.token)
-        this.$router.push({
-          name: 'Dashboard'
-        })
-      } catch (error) {
-        console.log(error)
-      } finally {
-        this.loading = false
-      }
+      // try {
+      await this.$refs.loginForm.validate()
+      this.loading = true
+      await this.$store.dispatch('user/loginAction', this.loginForm)
+      this.loading = false
+      this.$router.push({ name: 'Dashboard' })
+      // this.loading = true
+      // const { data } = await loginActionAPI(this.loginForm.username, this.loginForm.password, this.loginForm.code, this.codeToken)
+      // console.log(data)
+      // if (data.msg !== '登录成功') return this.$message.error(data.msg)
+      // this.$message({
+      //   message: data.msg,
+      //   type: 'success'
+      // })
+      //   this.$store.commit('user/SET_TOKEN', data.token)
+      //   this.$router.push({
+      //     name: 'Dashboard'
+      //   // })
+      // } catch (error) {
+      //   console.log(error)
+      // } finally {
+      //   this.loading = false
+      // }
     }
   }
 
