@@ -1,6 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import workorder from './components/workorder'
+import ointposition from './components/ointposition'
+import equipment from './components/equipment'
+import personnel from './components/personnel'
+import goods from './components/goods'
+import strategy from './components/strategy'
+import order from './components/order'
+import price from './components/price'
+
+const asyncRoute = [workorder, ointposition, equipment, personnel, goods, strategy, order, price]
+// console.log(asyncRoute)
 Vue.use(Router)
 
 /* Layout */
@@ -51,7 +62,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '赵大挫', icon: 'el-icon-help' }
     }]
   },
   // 404 page must be placed at the end !!!
@@ -61,10 +72,11 @@ export const constantRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...asyncRoute]
 })
 
 const router = createRouter()
+// console.log(router)
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

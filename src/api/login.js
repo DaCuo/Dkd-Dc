@@ -1,7 +1,7 @@
-import request from '@/utils/request'
+import require from '@/utils/request'
 
 export const getCodeAPI = (clientToken) => {
-  return request({
+  return require({
     url: `user-service/user/imageCode/${clientToken}`,
     responseType: 'blob'
   })
@@ -9,7 +9,7 @@ export const getCodeAPI = (clientToken) => {
 
 export const loginActionAPI = (data) => {
   // console.log(data)
-  return request({
+  return require({
     url: 'user-service/user/login',
     method: 'POST',
     data

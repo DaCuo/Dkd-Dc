@@ -17,7 +17,7 @@ const store = new Vuex.Store({
   plugins: [persistedState(
     {
       key: 'dkdToken',
-      paths: ['user.token']
+      paths: ['user.token', 'user.userId']
       // reducer(state) {
       //   // console.log(state.user.token)
       //   console.log(state)

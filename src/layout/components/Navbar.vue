@@ -1,23 +1,18 @@
 <template>
   <div class="navbar">
-    <!-- <hamburger @toggleClick="toggleSideBar"> <img src="" alt=""></hamburger> -->
-    <img src="../../assets/common/logoone.png" class="log">
-    <!-- <breadcrumb class="breadcrumb-container" /> -->
-
+    <!-- <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" /> -->
+    <img src="~@/assets/common/logoone.png" alt="" class="log">
     <div class="right-menu">
+      <img src="~@/assets/common/user.png" class="user-avatar">
+      <p class="username">{{ userInfoMsg.loginName }}</p>
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+        <div class="avatar-wrapper" @click.native="logout">
+          <span>退出</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+          <el-dropdown-item divided>
+            <span style="display:block;" @click="loginOut">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -27,19 +22,35 @@
 
 <script>
 import { mapGetters } from 'vuex'
+// import Breadcrumb from '@/components/Breadcrumb'
+// import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
+    // Breadcrumb,
+    // Hamburger
   },
   computed: {
     ...mapGetters([
-      'avatar'
+      'sidebar',
+      'avatar',
+      'userInfoMsg'
     ])
   },
+  created() {
+    this.$store.dispatch('user/userInfo')
+  },
   methods: {
+    toggleSideBar() {
+      this.$store.dispatch('app/toggleSideBar')
+    },
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    loginOut() {
+      this.$store.dispatch('user/loginOut')
+      this.$router.push('/login')
     }
   }
 }
@@ -47,7 +58,7 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-    height: 60px;
+  height: 60px;
     width: 100%;
     position: fixed;
     top: 0;
@@ -68,62 +79,73 @@ export default {
     transition: background .3s;
     -webkit-tap-highlight-color:transparent;
 
-    &:hover {
-      background: rgba(0, 0, 0, .025)
-    }
+    // &:hover {
+    //   // background: rgba(0, 0, 0, .025)
+    // }
   }
 
   .breadcrumb-container {
-    float: left;
+    // float: left;
   }
 
   .right-menu {
     float: right;
     height: 100%;
     line-height: 50px;
-
+    color: #fff;
+    display: flex;
+    align-items: center;
     &:focus {
       outline: none;
     }
-
+  .username{
+    margin: 5px 30px 0 15px;
+  }
     .right-menu-item {
       display: inline-block;
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: #fff;
       vertical-align: text-bottom;
 
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
+      // &.hover-effect {
+      //   cursor: pointer;
+      //   transition: background .3s;
 
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
+      //   &:hover {
+      //     // background: rgba(0, 0, 0, .025)
+      //   }
+      // }
     }
 
     .avatar-container {
       margin-right: 30px;
+      font-size: 16px;
+      color: #fff;
 
       .avatar-wrapper {
+        display: flex;
         margin-top: 5px;
         position: relative;
+        margin-right: 10px;
 
         .user-avatar {
           cursor: pointer;
           width: 40px;
           height: 40px;
           border-radius: 10px;
+          // padding: 20px;
+          span{
+            margin: 0px 50px 0 25px;
+          }
         }
-
         .el-icon-caret-bottom {
           cursor: pointer;
           position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          right: -14px;
+          top: 15px;
+          font-size: 16px;
         }
       }
     }

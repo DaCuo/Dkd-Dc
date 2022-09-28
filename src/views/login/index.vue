@@ -114,29 +114,16 @@ export default {
     },
     // 登录请求
     async  loginBtn() {
-      // try {
-      await this.$refs.loginForm.validate()
-      this.loading = true
-      await this.$store.dispatch('user/loginAction', this.loginForm)
-      this.loading = false
-      this.$router.push({ name: 'Dashboard' })
-      // this.loading = true
-      // const { data } = await loginActionAPI(this.loginForm.username, this.loginForm.password, this.loginForm.code, this.codeToken)
-      // console.log(data)
-      // if (data.msg !== '登录成功') return this.$message.error(data.msg)
-      // this.$message({
-      //   message: data.msg,
-      //   type: 'success'
-      // })
-      //   this.$store.commit('user/SET_TOKEN', data.token)
-      //   this.$router.push({
-      //     name: 'Dashboard'
-      //   // })
-      // } catch (error) {
-      //   console.log(error)
-      // } finally {
-      //   this.loading = false
-      // }
+      try {
+        await this.$refs.loginForm.validate()
+        this.loading = true
+        const data = await this.$store.dispatch('user/loginAction', this.loginForm)
+        console.log(data)
+        if (!data.success) return this.$message.error(data.msg)
+        this.$router.push({ name: 'Dashboard' })
+      } catch (error) {
+        console.log(error)
+      } finally { this.loading = false }
     }
   }
 
