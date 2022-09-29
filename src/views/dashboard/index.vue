@@ -1,13 +1,29 @@
 <template>
   <div class="dashboard">
-    <div class="data_area">
-      <el-row :gutter="20">
-        <el-col :span="14"><div class="Workorder  grid-content" /></el-col>
-        <el-col :span="10"><div class="sale  grid-content" /></el-col>
-      </el-row>
+    <!--top -->
+    <div class="top">
+      <div class="data_area">
+        <el-row :gutter="20">
+          <el-col :span="14"><div class="Workorder  grid-content padding">工单统计 </div></el-col>
+          <el-col :span="10"><div class="saleStt  grid-content padding"> 销售统计</div></el-col>
+        </el-row>
 
-      <el-row>
-        <el-col :span="24"><div class="grid-content bg-purple-dark" /></el-col>
+        <el-row>
+          <el-col :span="24"><div class="saleDate grid-content padding ">销售数据</div>   </el-col>
+        </el-row>
+      </div>
+      <div
+        class="grid-content  goods  padding"
+      >商品热榜</div>
+    </div>
+    <!-- bottom -->
+    <div class="bottom">
+      <el-row :gutter="20">
+        <el-col :span="12"><div class="grid-content btmleft padding">合作商点位图</div>
+        </el-col>
+        <el-col :span="12"><div class="grid-content btmleft padding ">异常设备监控
+          <el-empty description="描述文字" />
+        </div></el-col>
       </el-row>
     </div>
 
@@ -31,22 +47,54 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard {
-.data_area{
-  width: 75%;;
-  min-height: 600px;
-  background-color: pink;
+  .padding{
+    padding: 20px;
+  }
+  .top{
+     min-height: 540px;
+     width: 100%;
+     display: flex;
+     justify-content: space-between;    //  左边
+  .data_area{
+  width: 75%;
+   height: 100%;
+  // background-color: pink;
   .Workorder{
     min-height: 166px;
-    background-color: #E9F3FF;
+    background-color: #E9F3FF  ;
+    background:
+    url('../../assets/common/task.png') no-repeat 95% 95%,
+    url('../../assets/common/circle.png')  no-repeat;
   }
-  .sale{
+  .saleStt{
     min-height: 166px;
-    background-color: #FBEFE8;
+    background: #FBEFE8 url('../../assets/common/pinkpig.png') no-repeat 95%  95%;
 
+  }
+  .saleDate{
+    background-color: #ffffff;
+    height: 380px;
+  }
+  }
+  // 右边
+  .goods{
+  width: 24%;
+  height: inherit;
+  background-color: #fff;
+  }
+  }
+
+.bottom{
+  width: 100%;
+  min-height: 350px;
+  margin-top: 20px;
+  // background-color: skyblue;
+  .btmleft{
+    height: 350px;
+    background-color:#ffffff ;
   }
 }
 }
-
   .el-row {
     margin-bottom: 20px;
     &:last-child {
@@ -66,7 +114,7 @@ export default {
     background: #e5e9f2;
   }
   .grid-content {
-    border-radius: 25px;
+    border-radius: 20px;
     min-height: 36px;
   }
   .row-bg {

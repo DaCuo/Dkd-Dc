@@ -4,7 +4,6 @@ import store from './store'
 const whiteList = ['/login', '/404']
 // 登录权限设置
 router.beforeEach((to, from, next) => {
-  console.log(1111111)
   if (store.getters.token) {
     if (to.path === '/login') {
       next('/')
